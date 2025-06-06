@@ -5,6 +5,7 @@ import com.app.daily_haul.dto.ProductResponse;
 import com.app.daily_haul.model.Product;
 import com.app.daily_haul.repository.ProductRepository;
 import com.app.daily_haul.service.ProductService;
+import com.app.daily_haul.utils.Mappers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,42 +18,19 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-    private ProductResponse getProductResponse(Product product) {
-        return new ProductResponse(product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getQuantity(),
-                product.getCategory(),
-                product.getImageUrl(),
-                product.getActive());
-    }
-
-    private Product productReqToEnt(Product product, ProductRequest productRequest) {
-
-        product.setName(productRequest.getName() != null ? productRequest.getName() : product.getName());
-        product.setDescription(productRequest.getDescription() != null ? productRequest.getDescription() : product.getDescription());
-        product.setPrice(productRequest.getPrice() != null ? productRequest.getPrice() : product.getPrice());
-        product.setQuantity(productRequest.getQuantity() != null ? productRequest.getQuantity() : product.getQuantity());
-        product.setCategory(productRequest.getCategory() != null ? productRequest.getCategory() : product.getCategory());
-        product.setImageUrl(productRequest.getImageUrl() != null ? productRequest.getImageUrl() : product.getImageUrl());
-
-        return product;
-    }
-
     @Override
     public ProductResponse createProduct(ProductRequest productRequest) {
         Product product = new Product();
-        productReqToEnt(product, productRequest);
+        Mappers.productReqToEnt(product, productRequest);
         Product saved = productRepository.save(product);
-        return getProductResponse(saved);
+        return Mappers.getProductResponse(saved);
     }
 
     @Override
     public List<ProductResponse> getAllProducts() {
         return productRepository.findByActiveTrue()
                 .stream()
-                .map(prod -> getProductResponse(prod))
+                .map(prod -> Mappers.getProductResponse(prod))
                 .toList();
     }
 
@@ -60,9 +38,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse updateProduct(Long productId, ProductRequest productRequest) {
         return productRepository.findById(productId)
                 .map(daProd -> {
-                    productReqToEnt(daProd, productRequest);
+                    Mappers.productReqToEnt(daProd, productRequest);
                     productRepository.save(daProd);
-                    return getProductResponse(daProd);
+                    return Mappers.getProductResponse(daProd);
                 }).orElse(null);
     }
 
@@ -79,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponse> searchProducts(String keyword) {
         return productRepository.searchProducts(keyword).stream()
-                .map(this::getProductResponse)
+                .map(Mappers::getProductResponse)
                 .collect(Collectors.toList());
     }
 }

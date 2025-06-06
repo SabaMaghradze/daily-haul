@@ -37,6 +37,13 @@ public class CartItem {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public CartItem(User user, Product product, Integer quantity, BigDecimal price) {
+        this.user = user;
+        this.product = product;
+        this.quantity = quantity;
+        this.price = price;
+    }
 }
 
 
