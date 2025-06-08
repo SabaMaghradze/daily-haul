@@ -15,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,5 +85,15 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findById(cartId)
                 .map(Mappers::getCartResponse)
                 .orElse(null);
+    }
+
+    @Override
+    public List<CartResponse> fetchUserCarts(String userId) {
+        return userRepository.findById(Long.valueOf(userId))
+                .map(cartRepository::findByUser)
+                .map(cartItems -> cartItems.stream()
+                        .map(Mappers::getCartResponse)
+                        .collect(Collectors.toList()))
+                .orElseGet(Collections::emptyList);
     }
 }
