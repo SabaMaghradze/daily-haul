@@ -2,6 +2,7 @@ package com.app.daily_haul.service;
 
 import com.app.daily_haul.dto.CartItemRequest;
 import com.app.daily_haul.dto.CartResponse;
+import com.app.daily_haul.model.CartItem;
 
 import java.util.List;
 
@@ -12,5 +13,7 @@ public interface CartService {
 
     CartResponse fetchCart(Long cartId);
 
-    List<CartResponse> fetchUserCarts(String userId);
+    List<CartItem> fetchUserCarts(String userId);
+
+    void clearCart(String userId);
 }

@@ -2,6 +2,7 @@ package com.app.daily_haul.controller;
 
 import com.app.daily_haul.dto.CartItemRequest;
 import com.app.daily_haul.dto.CartResponse;
+import com.app.daily_haul.model.CartItem;
 import com.app.daily_haul.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,8 +45,9 @@ public class CartController {
 
         return response == null ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(response);
     }
-    
-    public ResponseEntity<List<CartResponse>> fetchUserCarts(@RequestHeader("X-User-ID") String userId) {
+
+    @GetMapping("/my-carts")
+    public ResponseEntity<List<CartItem>> fetchUserCarts(@RequestHeader("X-User-ID") String userId) {
         return ResponseEntity.ok(cartService.fetchUserCarts(userId));
     }
 }

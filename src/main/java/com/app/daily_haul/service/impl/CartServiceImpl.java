@@ -88,12 +88,15 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartResponse> fetchUserCarts(String userId) {
+    public List<CartItem> fetchUserCarts(String userId) {
         return userRepository.findById(Long.valueOf(userId))
                 .map(cartRepository::findByUser)
-                .map(cartItems -> cartItems.stream()
-                        .map(Mappers::getCartResponse)
-                        .collect(Collectors.toList()))
+                .map(cartItems -> cartItems.stream().collect(Collectors.toList()))
                 .orElseGet(Collections::emptyList);
+    }
+
+    @Override
+    public void clearCart(String userId) {
+        userRepository.findById(Long.valueOf(userId)).ifPresent(cartRepository::deleteByUser);
     }
 }

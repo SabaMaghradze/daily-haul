@@ -1,10 +1,10 @@
 package com.app.daily_haul.utils;
 
 import com.app.daily_haul.dto.*;
-import com.app.daily_haul.model.Address;
-import com.app.daily_haul.model.CartItem;
-import com.app.daily_haul.model.Product;
-import com.app.daily_haul.model.User;
+import com.app.daily_haul.model.*;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class Mappers {
 
@@ -78,5 +78,28 @@ public class Mappers {
                 getProductResponse(cartItem.getProduct()),
                 cartItem.getQuantity(),
                 cartItem.getPrice());
+    }
+
+    public static OrderItemResponse getOrderItemResponse(OrderItem orderItem) {
+        return new OrderItemResponse(orderItem.getId(),
+                orderItem.getProduct().getId(),
+                orderItem.getQuantity(),
+                orderItem.getPrice());
+    }
+
+    public static OrderResponse getOrderResponse(Order order) {
+        OrderResponse orderResponse = new OrderResponse(order.getId(),
+                order.getTotalAmount(),
+                order.getStatus(),
+                order.getCreatedAt());
+
+        List<OrderItemResponse> orderItemResponses = order.getOrderItems()
+                .stream()
+                .map(Mappers::getOrderItemResponse)
+                .toList();
+
+        orderResponse.setOrderItemsResponses(orderItemResponses);
+
+        return orderResponse;
     }
 }
